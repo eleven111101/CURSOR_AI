@@ -1,15 +1,15 @@
 /******************************************************************************
- * @file    swc_fusion.h
- * @brief   Sensor Fusion Software Component Interface
+ * @file    camera_processing.h
+ * @brief   Camera Processing Interface
  *
- * Combines Camera and Radar perception data to generate a unified object list
- * for the Forward Emergency Braking (FEB) module.
+ * Converts raw camera detections into validated camera objects for use by
+ * downstream ADAS components such as Fusion.
  *
  * Project : ADAS Dependency Tracing POC
  ******************************************************************************/
 
-#ifndef SWC_FUSION_H
-#define SWC_FUSION_H
+#ifndef CAMERA_PROCESSING_H
+#define CAMERA_PROCESSING_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -20,73 +20,64 @@ extern "C" {
  ******************************************************************************/
 
 #include "types.h"
+#include "camera_if.h"
 
 /******************************************************************************
  * Macros
  ******************************************************************************/
 
-#define FUSION_MAX_OBJECTS    (16U)
+#define CAMERA_OBJECT_LIST_SIZE    CAMERA_MAX_OBJECTS
 
 /******************************************************************************
- * Fusion Object List
+ * Camera Processing Output
  ******************************************************************************/
 
 typedef struct
 {
     uint8 objectCount;
 
-    FusionObjectType objects[FUSION_MAX_OBJECTS];
+    CameraObjectType objects[CAMERA_OBJECT_LIST_SIZE];
 
-} FusionObjectListType;
+} CameraObjectListType;
 
 /******************************************************************************
  * APIs
  ******************************************************************************/
 
 /**
- * @brief Initialize Sensor Fusion SWC.
+ * @brief Initialize camera processing.
  */
-void SWCFusion_Init(void);
+void CameraProcessing_Init(void);
 
 /**
- * @brief Execute one Sensor Fusion cycle.
+ * @brief Execute one camera processing cycle.
  */
-void SWCFusion_MainFunction(void);
+void CameraProcessing_MainFunction(void);
 
 /**
- * @brief Perform sensor fusion.
+ * @brief Process the latest camera frame.
  *
- * Combines validated Camera and Radar objects into a unified Fusion object
- * list.
- *
- * @return E_OK if successful.
+ * @return E_OK if processing succeeds.
  */
-Std_ReturnType SWCFusion_Process(void);
+Std_ReturnType CameraProcessing_ProcessFrame(void);
 
 /**
- * @brief Retrieve fused objects.
+ * @brief Retrieve processed camera objects.
  *
  * @param objectList Pointer to destination.
  *
  * @return E_OK if successful.
  */
-Std_ReturnType SWCFusion_GetObjects(
-    FusionObjectListType *objectList);
+Std_ReturnType CameraProcessing_GetObjects(
+    CameraObjectListType *objectList);
 
 /**
- * @brief Check whether Fusion output is valid.
- *
- * @return true if valid.
+ * @brief Reset camera processing.
  */
-bool SWCFusion_IsValid(void);
-
-/**
- * @brief Reset Sensor Fusion.
- */
-void SWCFusion_Reset(void);
+void CameraProcessing_Reset(void);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* SWC_FUSION_H */
+#endif /* CAMERA_PROCESSING_H */

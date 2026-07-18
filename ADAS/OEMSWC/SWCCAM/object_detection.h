@@ -1,15 +1,15 @@
 /******************************************************************************
- * @file    diagnostics.h
- * @brief   ADAS Diagnostics Interface
+ * @file    object_detection.h
+ * @brief   Camera Object Detection Interface
  *
- * Monitors the health and status of the major ADAS software components and
- * maintains diagnostic information for service and debugging purposes.
+ * Detects and classifies objects from processed camera data. The resulting
+ * object list is consumed by the Fusion SWC.
  *
  * Project : ADAS Dependency Tracing POC
  ******************************************************************************/
 
-#ifndef DIAGNOSTICS_H
-#define DIAGNOSTICS_H
+#ifndef OBJECT_DETECTION_H
+#define OBJECT_DETECTION_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -20,96 +20,92 @@ extern "C" {
  ******************************************************************************/
 
 #include "types.h"
+#include "camera_processing.h"
 
 /******************************************************************************
  * Macros
  ******************************************************************************/
 
-#define DIAGNOSTICS_MAX_RECORDS    (16U)
+#define OBJECT_DETECTION_MAX_OBJECTS    CAMERA_OBJECT_LIST_SIZE
 
 /******************************************************************************
- * Diagnostic Module IDs
+ * Object Classification
  ******************************************************************************/
 
 typedef enum
 {
-    DIAG_MODULE_CANIF = 0,
-    DIAG_MODULE_VEHSTATUS,
-    DIAG_MODULE_CAMERA,
-    DIAG_MODULE_RADAR,
-    DIAG_MODULE_FUSION,
-    DIAG_MODULE_FEB,
-    DIAG_MODULE_HMI,
-    DIAG_MODULE_DISPLAY
+    OBJECT_UNKNOWN = 0,
+    OBJECT_VEHICLE,
+    OBJECT_PEDESTRIAN,
+    OBJECT_CYCLIST,
+    OBJECT_STATIC
 
-} DiagnosticModuleType;
+} ObjectClassificationType;
 
 /******************************************************************************
- * Diagnostic Record
+ * Detected Object
  ******************************************************************************/
 
 typedef struct
 {
-    DiagnosticModuleType module;
+    CameraObjectType cameraObject;
 
-    SystemStateType state;
+    ObjectClassificationType classification;
 
-    uint32 errorCounter;
+    bool tracked;
 
-    bool communicationFault;
-
-} DiagnosticRecordType;
+} DetectedObjectType;
 
 /******************************************************************************
- * Diagnostic Database
+ * Object List
  ******************************************************************************/
 
 typedef struct
 {
-    uint8 recordCount;
+    uint8 objectCount;
 
-    DiagnosticRecordType records[DIAGNOSTICS_MAX_RECORDS];
+    DetectedObjectType objects[OBJECT_DETECTION_MAX_OBJECTS];
 
-} DiagnosticDatabaseType;
+} DetectedObjectListType;
 
 /******************************************************************************
  * APIs
  ******************************************************************************/
 
 /**
- * @brief Initialize diagnostics module.
+ * @brief Initialize object detection.
  */
-void Diagnostics_Init(void);
+void ObjectDetection_Init(void);
 
 /**
- * @brief Execute one diagnostics cycle.
+ * @brief Execute one object detection cycle.
  */
-void Diagnostics_MainFunction(void);
+void ObjectDetection_MainFunction(void);
 
 /**
- * @brief Perform health monitoring of all ADAS modules.
+ * @brief Detect and classify camera objects.
+ *
+ * @return E_OK if detection succeeds.
+ */
+Std_ReturnType ObjectDetection_Process(void);
+
+/**
+ * @brief Retrieve detected object list.
+ *
+ * @param objectList Pointer to destination.
  *
  * @return E_OK if successful.
  */
-Std_ReturnType Diagnostics_Process(void);
+Std_ReturnType ObjectDetection_GetObjects(
+    DetectedObjectListType *objectList);
 
 /**
- * @brief Retrieve diagnostic database.
- *
- * @param database Pointer to destination.
- *
- * @return E_OK if successful.
+ * @brief Reset object detection.
  */
-Std_ReturnType Diagnostics_GetDatabase(
-    DiagnosticDatabaseType *database);
-
-/**
- * @brief Reset diagnostics module.
- */
-void Diagnostics_Reset(void);
+void ObjectDetection_Reset(void);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* DIAGNOSTICS_H */
+#endif /* OBJECT_DETECTION_H */
