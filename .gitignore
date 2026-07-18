@@ -1,1 +1,18 @@
-.xlsx
+# Joern generated files
+**/cpg.bin
+**/cpg.bin.zip
+
+# Exported graphs
+output/
+exports/
+
+# Temporary files
+*.log
+*.tmp
+
+# Installer artifacts
+joern-cli.zip
+joern-install.sh
+
+# Other files
+POC_codebase.xlsx
