@@ -405,8 +405,9 @@ object SymbolExtractor {
   private def extractLocals(): Unit = Utilities.safe(())(
     cpg.local.l.foreach { loc =>
       val id = Utilities.nid(loc)
-      val ownerMethodName = Utilities.safe("")(loc.method.name)
-      val isGlobal = Config.globalScopeMethodNames.contains(ownerMethodName)
+      val isGlobal = Utilities.safe(false)(
+        loc.method.l.exists(m => Config.globalScopeMethodNames.contains(m.name))
+      )
       GraphModel.addNode(CATEGORY, GNode(
         id       = id,
         label    = "Variable",
