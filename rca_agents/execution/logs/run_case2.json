@@ -1,0 +1,28 @@
+{
+  "scenario": "run_case2",
+  "case_label": "Case 2 - Warning Lamp OFF (Issue)",
+  "description": "Identical driving conditions to Case 1 (72 km/h, 12 m distance) -- same riskScore should result -- but the warning lamp and audible alert do not activate. Investigation target: why is the warning lamp OFF when the computed risk should trigger it ON.",
+  "timestamp": "2026-07-19T10:24:00Z",
+  "sensorData": {
+    "vehicleSpeed": 72,
+    "objectDistance": 12,
+    "relativeSpeed": 72,
+    "timeToCollision": 1
+  },
+  "febData": {
+    "riskScore": 80,
+    "warningRequest": 0,
+    "brakeRequest": 0
+  },
+  "hmiData": {
+    "warningLamp": 0,
+    "buzzer": 0,
+    "displayState": 0,
+    "displayMessage": "Forward Collision Warning"
+  },
+  "config": {
+    "FEATURE_ENABLE": 0,
+    "WARNING_RISK": 60,
+    "BRAKE_RISK": 85
+  }
+}

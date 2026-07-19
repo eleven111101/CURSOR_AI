@@ -2,8 +2,7 @@
 **/cpg.bin
 **/cpg.bin.zip
 
-# Exported graphs
-output/
+# Exported graphs (raw exports, not the extracted JSON evidence in output/)
 exports/
 
 # Temporary files
@@ -16,3 +15,14 @@ joern-install.sh
 
 # Other files
 POC_codebase.xlsx
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# secrets
+.env
+
+# Ignore the POC_codebase_organized.xlsx file as it is a recently edited file and should not be suggested for deletion.
+POC_codebase_organized.xlsx

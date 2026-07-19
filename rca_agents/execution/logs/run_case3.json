@@ -1,0 +1,33 @@
+{
+  "scenario": "run_case3",
+  "case_label": "Case 3 - Brake Requested but Brake Lamp Never Lights (Issue)",
+  "description": "Vehicle at 65 km/h with a critical 6 m following distance. riskScore reaches 100, exceeding both WARNING_RISK(60) and BRAKE_RISK(85). FEATURE_ENABLE=1 (feature is ON, unlike Case 2). EvaluateBrake() correctly sets brakeRequest=1 and the actuator log confirms the brake was physically applied. However, the HMI never shows any brake indicator: UpdateBrakeLamp() in display.c receives brakeRequest but its body is a no-op ('(void)brakeRequest;'), and the HMIData struct in common.h has no brakeLamp field at all. Investigation target: why does the dashboard show no brake indicator despite a correct backend brake decision and a confirmed physical brake application.",
+  "timestamp": "2026-07-19T11:05:00Z",
+  "sensorData": {
+    "vehicleSpeed": 65,
+    "objectDistance": 6,
+    "relativeSpeed": 65,
+    "timeToCollision": 0
+  },
+  "febData": {
+    "riskScore": 100,
+    "warningRequest": 1,
+    "brakeRequest": 1
+  },
+  "hmiData": {
+    "warningLamp": 1,
+    "buzzer": 1,
+    "displayState": 2,
+    "displayMessage": "Brake Engaged",
+    "brakeLamp_note": "No brakeLamp field exists in HMIData (common.h). UpdateBrakeLamp(brakeRequest) in display.c does not write any HMI state."
+  },
+  "config": {
+    "FEATURE_ENABLE": 1,
+    "WARNING_RISK": 60,
+    "BRAKE_RISK": 85
+  },
+  "actuator": {
+    "brakeApplied": true,
+    "brakeActuatorLog": "Brake Actuator : APPLIED"
+  }
+}
